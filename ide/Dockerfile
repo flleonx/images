@@ -28,6 +28,7 @@ RUN echo 'eval "$(fzf --bash)"' >> ~/.bashrc
 RUN git clone https://github.com/flleonx/kickstart.nvim.git /tmp/nvim && \
 	mkdir -p ~/.config && \
 	mv /tmp/nvim ~/.config/nvim
+
 RUN nvim "+Lazy! install" +MasonToolsInstallSync +q!
 
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
