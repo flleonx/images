@@ -19,7 +19,7 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 RUN curl https://mise.run | sh
-RUN mise use -g neovim starship go golangci-lint node ripgrep fzf zoxide
+RUN mise use -g neovim starship go golangci-lint node ripgrep fzf zoxide lazygit jq
 
 RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc
 RUN echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
