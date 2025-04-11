@@ -1,7 +1,7 @@
 FROM ubuntu:24.04
 
-run apt-get update \
-	&& apt-get install \
+RUN apt-get update \
+	&& apt-get -y install \
 	sudo curl git ca-certificates build-essential dbus unzip tmux locales
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
