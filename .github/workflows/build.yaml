@@ -5,6 +5,9 @@ on:
     branches:
       - main  # Trigger on push to main branch
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   build-arm:
     runs-on: ubuntu-24.04-arm
@@ -36,8 +39,9 @@ jobs:
 
       # Step 4: Build and push the Docker image
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
+          context: ./ide
           file: ./ide/Dockerfile  # Path to Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/flleonx/ide:${{ matrix.architecture }}  # Latest tag
@@ -73,8 +77,9 @@ jobs:
 
       # Step 4: Build and push the Docker image
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
+          context: ./ide
           file: ./ide/Dockerfile  # Path to Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/flleonx/ide:${{ matrix.architecture }}  # Latest tag
