@@ -8,6 +8,10 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-arm:
     runs-on: ubuntu-24.04-arm
@@ -15,10 +19,6 @@ jobs:
     strategy:
       matrix:
         architecture: [arm64]
-
-    permissions:
-      contents: read
-      packages: write  # Required for pushing to GHCR
 
     steps:
       # Step 1: Check out the repository code
@@ -44,7 +44,7 @@ jobs:
           context: ./ide
           file: ./ide/Dockerfile  # Path to Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/flleonx/ide:${{ matrix.architecture }}  # Latest tag
+          tags: ghcr.io/flleonx/ide:arm-${{ github.run_id }}
           platforms: linux/${{ matrix.architecture }}
 
   build-amd:
@@ -54,10 +54,6 @@ jobs:
       matrix:
         architecture: [amd64]
 
-    permissions:
-      contents: read
-      packages: write  # Required for pushing to GHCR
-
     steps:
       # Step 1: Check out the repository code
       - name: Checkout code
@@ -82,5 +78,23 @@ jobs:
           context: ./ide
           file: ./ide/Dockerfile  # Path to Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/flleonx/ide:${{ matrix.architecture }}  # Latest tag
+          tags: ghcr.io/flleonx/ide:amd-${{ github.run_id }}
           platforms: linux/${{ matrix.architecture }}
+
+  merge-and-push:
+      needs: [build-amd, build-arm]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Log in to GHCR
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Create and push multi-architecture image
+          run: |
+            docker buildx imagetools create \
+              --tag ghcr.io/flleonx/ide:latest \
+              ghcr.io/flleonx/ide:amd-${{ github.run_id }} \
+              ghcr.io/flleonx/ide:arm-${{ github.run_id }}
