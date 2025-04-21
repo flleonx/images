@@ -9,4 +9,10 @@ ENV TERM="xterm-256color"
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
+ENV MISE_DATA_DIR="/mise"
+ENV MISE_CONFIG_DIR="/mise"
+ENV MISE_CACHE_DIR="/mise/cache"
+ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
+ENV PATH="/mise/shims:$PATH"
+
 RUN git clone https://github.com/flleonx/dotfiles.git && sh /dotfiles/setup.sh 
